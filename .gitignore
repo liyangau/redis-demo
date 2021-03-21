@@ -3,3 +3,4 @@ gencert.sh
 test.sh
 conf/
 tls/
+.DS_Store
