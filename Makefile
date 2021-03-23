@@ -7,10 +7,10 @@
 #
 #
 # For more information, please check https://github.com/liyangau/redis-demo
-
-NETWORK_NAME=default
 REDIS_6_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
 REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
+
+NETWORK_NAME=default
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
 REDIS_CLUSTER_SLAVES_NUMBER=3
@@ -19,7 +19,7 @@ REDIS_SENTINEL_PORT=5000
 ####################################################################################
 # Single Redis container creation
 ####################################################################################
-.PHONY: redis-single redis-single-ssl redis/redis.conf redis-cluster redis-cluster-ssl redis-cleanup
+.PHONY: redis-single redis-single-ssl redis/redis.conf 
 
 redis-single: redis/redis.conf
 	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)"
@@ -36,6 +36,7 @@ redis/redis.conf:
 ####################################################################################
 # Redis Cluster Creation
 ####################################################################################
+.PHONY: redis-cluster redis-cluster-ssl
 redis-cluster : redis-single
 	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(NETWORK_NAME)"
 
@@ -44,6 +45,7 @@ redis-cluster-ssl : redis-generate-ssl redis-single-ssl
 ####################################################################################
 # Redis Sentinel Creation
 ####################################################################################
+.PHONY: sentinel-cluster sentinel-cluster-ssl
 sentinel-cluster : redis-cluster
 	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)"
 
@@ -62,5 +64,6 @@ redis-generate-ssl:
 ####################################################################################
 # clean up
 ####################################################################################
+.PHONY: redis-cleanup
 redis-cleanup : 
 	@sh $(PWD)/scripts/redis-cleanup.sh

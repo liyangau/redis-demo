@@ -1,1 +1,77 @@
-# redis-demo
+# Redis Demo
+
+
+
+> The knowledge I used on this repo is inspired by That DevOps Guy's [YouTube](https://www.youtube.com/channel/UCFe9-V_rN9nLqVNiI8Yof3w) videos. Thanks him for sharing his knowledge.
+
+This repo helps you to spin up redis quickly. You can start a standalone redis, redis cluster or redis sentinel quickly with docker.
+
+Before you start, please understand this repo is designed to be used for testing only. It does not have persisten storage hence all data in your testing will be deleted once you stop/remove the container. Please use it at your own discretion.
+
+### Clone this repo
+
+```bash
+git clone https://github.com/liyangau/redis-demo
+```
+
+You will have everything you need inside `redis-demo/` folder.
+
+### Change variables to suit your needs
+
+There are a few variables you can change on `Makefile`
+
+- **NETWORK_NAME**
+
+  You can join your redis to your application network. Let's say your app is running in external network `my-app`, you can use this parameter to run redis within the same docker network. (Default: `default`)
+
+- **REDIS_PASSWORD**
+
+  This is the password to authenticate redis. You need this password to authenicate with `redis-cli`. (Default: `A-SUPER-STRONG-DEMO-PASSWORD` )
+
+- **REDIS_SSL_CN**
+
+  Common name of the SSL certificate. change it to anything suit your system, it is self-sign and won't be trusted  unless your system choose to. (Default: `redis.test.demo`)
+
+- **REDIS_CLUSTER_SLAVES_NUMBER**
+
+  How many slaves in the redis cluster you need. This support from 3 to 8 slaves. You can spin up more if you want but I limit my code to run at most 8 containers. (Default: `3`)
+
+- **REDIS_SENTINEL_PORT**
+
+  You can set default sentinel port with this variable. (Default: `5000`)
+
+### Commands
+
+> When `-ssl` command is used, this script will generate the self-sign certificates and mount the certificates inside the containers and added the needful configuration to `redis.conf` or `sentinel.conf` automatically. 
+
+#### Standalone Redis
+
+- `make redis-single` 
+- `make redis-single-ssl`
+
+You can use one of these two commands to start a single redis container `redis-demo`. The configure file is downloaded from redis [official website](https://raw.githubusercontent.com/redis/redis/6.0/redis.conf). In this setup, my script will change `bind 127.0.0.1` to `bind 0.0.0.0` and inject password define in `REDIS_PASSWORD` to the config file.
+
+#### Redis Cluster
+
+- `make redis-cluster`
+- `make redis-cluster-ssl`
+
+You can use one of these two commands to start a redis cluster. The master container is `redis-demo` and the number of slaves is definied with **REDIS_CLUSTER_SLAVES_NUMBER** variable. 
+
+#### Redis Sentinel
+
+- `make sentinel-cluster`
+- `make sentinel-cluster-ssl`
+
+These two command will spin up a redis cluster first and then start 3 sentinel containers to monitor the cluster. If the master container  is down, sentinel will promot one of the slaves to be the master node.
+
+#### Clean up
+
+- `make redis-cleanup`
+
+This command will find all container has `redis` in it, stop and remove these container. CAUTION: This command removes **ALL** contaners hence data inside the container will be deleted forever.
+
+
+
+
+
