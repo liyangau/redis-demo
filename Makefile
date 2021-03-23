@@ -4,10 +4,14 @@
 # |  _  // _ \/ _` | / __| | |  | |/ _ \ '_ ` _ \ / _ \ 
 # | | \ \  __/ (_| | \__ \ | |__| |  __/ | | | | | (_) |
 # |_|  \_\___|\__,_|_|___/ |_____/ \___|_| |_| |_|\___/  
+#
+#
+# For more information, please check https://github.com/liyangau/redis-demo
 
-NETWORK_NAME=kong-ee-net
+NETWORK_NAME=default
 REDIS_6_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
-REDIS_PASSWORD=3C597CEA-C3DD-4067-8BD4-4618606CD9FF
+REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
+REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
 REDIS_CLUSTER_SLAVES_NUMBER=3
 REDIS_SENTINEL_PORT=5000
@@ -50,8 +54,9 @@ sentinel-cluster-ssl : redis-generate-ssl redis-cluster-ssl
 ####################################################################################
 .PHONY: redis-generate-ssl
 redis-generate-ssl:
-	@wget --quiet 'https://links.aufomm.com/gencert' -O $(PWD)/gencert.sh
-	@sed -i '' 's/generate_cert redis "SSL"/generate_cert redis "$(REDIS_SSL_CN)"/g' $(PWD)/gencert.sh
+	@wget --quiet $(REDIS_GEN_SSL_SH) -O $(PWD)/gencert.sh
+	@sed -i '' 's/generate_cert redis "Generic-cert"/generate_cert redis "$(REDIS_SSL_CN)"/g' $(PWD)/gencert.sh
+	@sed -i '' 's/tests\/tls/tls/g' $(PWD)/gencert.sh
 	@chmod +x gencert.sh
 	@sh gencert.sh
 ####################################################################################
