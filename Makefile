@@ -5,24 +5,23 @@
 # | | \ \  __/ (_| | \__ \ | |__| |  __/ | | | | | (_) |
 # |_|  \_\___|\__,_|_|___/ |_____/ \___|_| |_| |_|\___/  
 
+NETWORK_NAME=kong-ee-net
 REDIS_6_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
 REDIS_PASSWORD=3C597CEA-C3DD-4067-8BD4-4618606CD9FF
-KONG_NETWORK_NAME=kong-ee-net
 REDIS_SSL_CN=redis.test.demo
 REDIS_CLUSTER_SLAVES_NUMBER=3
+REDIS_SENTINEL_PORT=5000
 
 ####################################################################################
-# Cluster Creation
-# This will map the host 8001 to NodePort 32001 and 
-# host 8002 to NodePort 32002
+# Single Redis container creation
 ####################################################################################
 .PHONY: redis-single redis-single-ssl redis/redis.conf redis-cluster redis-cluster-ssl redis-cleanup
 
 redis-single: redis/redis.conf
-	@sh $(PWD)/scripts/redis-single.sh "$(KONG_NETWORK_NAME)"
+	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)"
 
 redis-single-ssl: redis/redis.conf redis-generate-ssl
-	@sh $(PWD)/scripts/redis-single.sh "$(KONG_NETWORK_NAME)" "TLS"
+	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)" "TLS"
 	
 redis/redis.conf:
 	@mkdir -p $(PWD)/conf
@@ -30,18 +29,24 @@ redis/redis.conf:
 	@sed -i '' 's/bind 127.0.0.1/bind 0.0.0.0/g' $(PWD)/conf/redis.conf
 	@echo "requirepass $(REDIS_PASSWORD)" >>  $(PWD)/conf/redis.conf
 	@echo "masterauth $(REDIS_PASSWORD)" >>  $(PWD)/conf/redis.conf
-
 ####################################################################################
-# Cluster Creation
+# Redis Cluster Creation
 ####################################################################################
 redis-cluster : redis-single
-	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(KONG_NETWORK_NAME)"
+	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(NETWORK_NAME)"
 
 redis-cluster-ssl : redis-generate-ssl redis-single-ssl
-	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(KONG_NETWORK_NAME)" "TLS"
-	
+	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
-# TLS Enable
+# Redis Sentinel Creation
+####################################################################################
+sentinel-cluster : redis-cluster
+	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)"
+
+sentinel-cluster-ssl : redis-generate-ssl redis-cluster-ssl
+	@sh $(PWD)/scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "TLS"
+####################################################################################
+# Generate self-sign cert for TLS connection
 ####################################################################################
 .PHONY: redis-generate-ssl
 redis-generate-ssl:
