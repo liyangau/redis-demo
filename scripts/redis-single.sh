@@ -32,5 +32,5 @@ if [ ! "$(docker ps -q -f name=redis-demo)" ]; then
         redis-server /etc/redis/redis.conf
     fi
 else
-    echo "redis-demo container is already running."
+    echo "\033[1;4mredis-demo\033[0m container is already running."
 fi

@@ -12,7 +12,7 @@ do
     echo "sentinel down-after-milliseconds mymaster 5000" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "sentinel failover-timeout mymaster 60000" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "sentinel parallel-syncs mymaster 1" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
-    echo "sentinel auth-pass mymaster $1" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
+    echo "sentinel auth-pass mymaster \"$1\"" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     printf "Creating \033[1;4mredis-sentinel-$i\033[0m container: \n"
 
     if [ ! -z "$4" ] && [ "$4" = "TLS" ]; then

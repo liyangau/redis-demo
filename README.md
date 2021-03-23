@@ -16,13 +16,22 @@ git clone https://github.com/liyangau/redis-demo
 
 You will have everything you need inside `redis-demo/` folder.
 
+### Create Network
+
+```bash
+docker network create redis-demo
+```
+
+These redis containers need to be run on an external network. By default they are run in network `redis-demo`.
+You can define the network vis **NETWORK_NAME** variable below. 
+
 ### Change variables to suit your needs
 
 There are a few variables you can change on `Makefile`
 
 - **NETWORK_NAME**
 
-  You can join your redis to your application network. Let's say your app is running in external network `my-app`, you can use this parameter to run redis within the same docker network. (Default: `default`)
+  You can join redis to your application network. Let's say your app is running in network `my-app`, you can use this parameter to run redis within the same docker network. (Default: `redis-demo`)
 
 - **REDIS_PASSWORD**
 
@@ -60,8 +69,8 @@ You can use one of these two commands to start a redis cluster. The master conta
 
 #### Redis Sentinel
 
-- `make sentinel-cluster`
-- `make sentinel-cluster-ssl`
+- `make redis-sentinel`
+- `make redis-sentinel-ssl`
 
 These two command will spin up a redis cluster first and then start 3 sentinel containers to monitor the cluster. If the master container  is down, sentinel will promot one of the slaves to be the master node.
 
@@ -70,8 +79,3 @@ These two command will spin up a redis cluster first and then start 3 sentinel c
 - `make redis-cleanup`
 
 This command will find all container has `redis` in it, stop and remove these container. CAUTION: This command removes **ALL** contaners hence data inside the container will be deleted forever.
-
-
-
-
-

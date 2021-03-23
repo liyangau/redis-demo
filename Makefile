@@ -10,7 +10,7 @@
 REDIS_6_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
 REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
 
-NETWORK_NAME=default
+NETWORK_NAME=redis-demo
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
 REDIS_CLUSTER_SLAVES_NUMBER=3
@@ -31,8 +31,8 @@ redis/redis.conf:
 	@mkdir -p $(PWD)/conf
 	@wget --quiet $(REDIS_6_OFFICIAL_CONF) -O $(PWD)/conf/redis.conf
 	@sed -i '' 's/bind 127.0.0.1/bind 0.0.0.0/g' $(PWD)/conf/redis.conf
-	@echo "requirepass $(REDIS_PASSWORD)" >>  $(PWD)/conf/redis.conf
-	@echo "masterauth $(REDIS_PASSWORD)" >>  $(PWD)/conf/redis.conf
+	@echo "requirepass \"$(REDIS_PASSWORD)\"" >>  $(PWD)/conf/redis.conf
+	@echo "masterauth \"$(REDIS_PASSWORD)\"" >>  $(PWD)/conf/redis.conf
 ####################################################################################
 # Redis Cluster Creation
 ####################################################################################
@@ -46,10 +46,10 @@ redis-cluster-ssl : redis-generate-ssl redis-single-ssl
 # Redis Sentinel Creation
 ####################################################################################
 .PHONY: sentinel-cluster sentinel-cluster-ssl
-sentinel-cluster : redis-cluster
+redis-sentinel : redis-cluster
 	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)"
 
-sentinel-cluster-ssl : redis-generate-ssl redis-cluster-ssl
+redis-sentinel-ssl : redis-generate-ssl redis-cluster-ssl
 	@sh $(PWD)/scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
 # Generate self-sign cert for TLS connection
