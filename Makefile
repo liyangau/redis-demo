@@ -13,7 +13,8 @@ REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/ge
 NETWORK_NAME=redis-demo
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
-REDIS_CLUSTER_SLAVES_NUMBER=3
+REDIS_REPLICATION_SLAVES_NUMBER=3
+REDIS_CLUSTER_NODES_NUMBER=6
 REDIS_SENTINEL_PORT=5000
 
 ####################################################################################
@@ -34,22 +35,31 @@ redis/redis.conf:
 	@echo "requirepass \"$(REDIS_PASSWORD)\"" >>  $(PWD)/conf/redis.conf
 	@echo "masterauth \"$(REDIS_PASSWORD)\"" >>  $(PWD)/conf/redis.conf
 ####################################################################################
-# Redis Cluster Creation
+# Redis Replication Creation
 ####################################################################################
-.PHONY: redis-cluster redis-cluster-ssl
-redis-cluster : redis-single
-	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(NETWORK_NAME)"
+.PHONY: redis-cluster redis-redis-cluster-ssl
+redis-cluster : redis/redis.conf
+	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "$(REDIS_PASSWORD)"
 
-redis-cluster-ssl : redis-generate-ssl redis-single-ssl
-	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
+redis-cluster-ssl : redis/redis.conf redis-generate-ssl 
+	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "TLS" "$(REDIS_PASSWORD)"
+####################################################################################
+# Redis Replication Creation
+####################################################################################
+.PHONY: redis-replication redis-replication-ssl
+redis-replication : redis-single
+	@sh $(PWD)/scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)"
+
+redis-replication-ssl : redis-generate-ssl redis-single-ssl
+	@sh $(PWD)/scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
 # Redis Sentinel Creation
 ####################################################################################
 .PHONY: sentinel-cluster sentinel-cluster-ssl
-redis-sentinel : redis-cluster
+redis-sentinel : redis-replication
 	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)"
 
-redis-sentinel-ssl : redis-generate-ssl redis-cluster-ssl
+redis-sentinel-ssl : redis-generate-ssl redis-replication-ssl
 	@sh $(PWD)/scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
 # Generate self-sign cert for TLS connection

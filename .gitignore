@@ -4,4 +4,6 @@ test.sh
 conf/
 tls/
 sentinel/
+replication/
+single/
 .DS_Store

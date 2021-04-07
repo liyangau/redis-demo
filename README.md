@@ -65,7 +65,14 @@ You can use one of these two commands to start a single redis container `redis-d
 - `make redis-cluster`
 - `make redis-cluster-ssl`
 
-You can use one of these two commands to start a redis cluster. The master container is `redis-demo` and the number of slaves is definied with **REDIS_CLUSTER_SLAVES_NUMBER** variable. 
+You can use one of these two commands to start a redis cluster. You need to use 6 to 12 nodes for your cluster, nodes number is defined by `REDIS_CLUSTER_NODES_NUMBER` variable. By default this script create 6 nodes, 3 master and 3 slaves.
+
+#### Redis Replication
+
+- `make redis-replication`
+- `make redis-replication-ssl`
+
+You can use one of these two commands to start a redis replication. The master container is `redis-demo` and the number of slaves is definied with **REDIS_REPLICATION_SLAVES_NUMBER** variable. By default this script create 3 slaves. 
 
 #### Redis Sentinel
 
