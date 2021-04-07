@@ -19,6 +19,7 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
         if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
             PASSWORD=$4
             echo "tls-cluster yes" >>  $(PWD)/cluster/conf/$i/redis.conf
+            echo "tls-replication yes" >>  $(PWD)/cluster/conf/$i/redis.conf
             echo "port 0" >> $(PWD)/cluster/conf/$i/redis.conf
             echo "tls-port 6379" >> $(PWD)/cluster/conf/$i/redis.conf
             echo "tls-cert-file /etc/ssl/certs/redis.crt" >> $(PWD)/cluster/conf/$i/redis.conf

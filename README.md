@@ -1,8 +1,6 @@
 # Redis Demo
 
-
-
-> The knowledge I used on this repo is inspired by That DevOps Guy's [YouTube](https://www.youtube.com/channel/UCFe9-V_rN9nLqVNiI8Yof3w) videos. Thanks him for sharing his knowledge.
+> The knowledge I used on this repo is inspired by `That DevOps Guy`'s [YouTube](https://www.youtube.com/channel/UCFe9-V_rN9nLqVNiI8Yof3w) videos. Thanks him for sharing his knowledge.
 
 This repo helps you to spin up redis quickly. You can start a standalone redis, redis cluster or redis sentinel quickly with docker.
 
