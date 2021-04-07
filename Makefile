@@ -10,8 +10,8 @@
 REDIS_6_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
 REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
 
-NETWORK_NAME=redis-demo
-REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
+NETWORK_NAME=kong-ee-net
+REDIS_PASSWORD=17c7697f-8159-4bfb-afda-8ba7d03a0c23
 REDIS_SSL_CN=redis.test.demo
 REDIS_REPLICATION_SLAVES_NUMBER=3
 REDIS_CLUSTER_NODES_NUMBER=6

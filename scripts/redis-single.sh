@@ -8,7 +8,7 @@ if [ ! "$(docker ps -q -f name=redis-demo)" ]; then
     printf "Creating new \033[1;4mredis-demo\033[0m container: \n"
     mkdir -p $(PWD)/single/conf/
     cp $(PWD)/conf/redis.conf $(PWD)/single/conf/
-    echo "slaveof redis-demo 6379 " >>  $(PWD)/replication/conf/$i/redis.conf
+    
     if [ ! -z "$2" ] && [ "$2" = "TLS" ]; then
         echo "port 0" >> $(PWD)/single/conf/redis.conf
         echo "tls-port 6379" >> $(PWD)/single/conf/redis.conf
