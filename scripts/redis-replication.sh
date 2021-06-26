@@ -1,7 +1,7 @@
 #! /bin/sh
 numberOfSlave=3
 
-if [ "${1}" -lt 9 ] && [ "${1}" -gt 2 ]; then
+if [ "${1}" -lt 9 ] && [ "${1}" -gt 0 ]; then
     numberOfSlaves=$1
     
     for i in $(seq 1 $numberOfSlaves)    
@@ -41,7 +41,7 @@ if [ "${1}" -lt 9 ] && [ "${1}" -gt 2 ]; then
 else
     docker stop redis-demo | 2> /dev/null
     docker rm redis-demo | 2> /dev/null
-    echo "\nWe only support creating a redis replication with 3 to 8 slaves."
+    echo "\nWe only support creating a redis replication with 1 to 8 slaves."
     echo "Removing \033[1;4mredis-demo\033[0m container. \n"
     exit
 fi

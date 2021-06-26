@@ -13,14 +13,15 @@ REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/ge
 NETWORK_NAME=redis-demo
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
-REDIS_REPLICATION_SLAVES_NUMBER=3
+REDIS_REPLICATION_SLAVES_NUMBER=1
 REDIS_CLUSTER_NODES_NUMBER=6
-REDIS_SENTINEL_PORT=5000
+REDIS_SENTINEL_PORT=26379
+REDIS_SENTINEL_NUMBER=1
 
 ####################################################################################
 # Single Redis container creation
 ####################################################################################
-.PHONY: redis-single redis-single-ssl redis/redis.conf 
+.PHONY: redis-single redis-single-ssl redis/redis.conf
 
 redis-single: redis/redis.conf
 	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)"
@@ -28,7 +29,7 @@ redis-single: redis/redis.conf
 redis-single-ssl: redis/redis.conf redis-generate-ssl
 	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)" "TLS"
 	
-redis/redis.conf:
+redis/redis.conf: redis-check-network
 	@mkdir -p $(PWD)/conf
 	@wget --quiet $(REDIS_6_OFFICIAL_CONF) -O $(PWD)/conf/redis.conf
 	@sed -i '' 's/bind 127.0.0.1/bind 0.0.0.0/g' $(PWD)/conf/redis.conf
@@ -57,10 +58,10 @@ redis-replication-ssl : redis-generate-ssl redis-single-ssl
 ####################################################################################
 .PHONY: sentinel-cluster sentinel-cluster-ssl
 redis-sentinel : redis-replication
-	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)"
+	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)"
 
 redis-sentinel-ssl : redis-generate-ssl redis-replication-ssl
-	@sh $(PWD)/scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "TLS"
+	@sh $(PWD)/scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)" "TLS"
 ####################################################################################
 # Generate self-sign cert for TLS connection
 ####################################################################################
@@ -74,6 +75,9 @@ redis-generate-ssl:
 ####################################################################################
 # clean up
 ####################################################################################
-.PHONY: redis-cleanup
+.PHONY: redis-cleanup redis-check-network
 redis-cleanup : 
 	@sh $(PWD)/scripts/redis-cleanup.sh
+
+redis-check-network : 
+	@docker network inspect $(NETWORK_NAME) >/dev/null 2>&1 || docker network create --driver bridge $(NETWORK_NAME) >/dev/null

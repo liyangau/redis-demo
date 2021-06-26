@@ -1,5 +1,5 @@
 #! /bin/sh
-numberOfSentinel=3
+numberOfSentinel=$4
 
 for i in $(seq 1 $numberOfSentinel)    
 do
@@ -8,6 +8,7 @@ do
     touch $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "port $2" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "sentinel deny-scripts-reconfig yes" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
+    echo "requirepass A-SUPER-STRONG-DEMO-PASSWORD" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "sentinel monitor mymaster redis-demo 6379 2" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "sentinel down-after-milliseconds mymaster 5000" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     echo "sentinel failover-timeout mymaster 60000" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
@@ -15,7 +16,7 @@ do
     echo "sentinel auth-pass mymaster \"$1\"" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
     printf "Creating \033[1;4mredis-sentinel-$i\033[0m container: \n"
 
-    if [ ! -z "$4" ] && [ "$4" = "TLS" ]; then
+    if [ ! -z "$5" ] && [ "$5" = "TLS" ]; then
         echo "port 0" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
         echo "tls-port 6379" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
         echo "tls-cert-file /etc/ssl/certs/redis.crt" >>  $(PWD)/sentinel/conf/$i/sentinel.conf
