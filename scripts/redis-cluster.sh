@@ -9,26 +9,26 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
     
     for i in $(seq 1 $numberOfNodes)    
     do
-        mkdir -p $(PWD)/cluster/conf/$i
-        cp $(PWD)/conf/redis.conf $(PWD)/cluster/conf/$i
-        echo "cluster-enabled yes" >> $(PWD)/cluster/conf/$i/redis.conf
-        echo "cluster-config-file nodes.conf" >> $(PWD)/cluster/conf/$i/redis.conf
-        echo "cluster-node-timeout 5000" >> $(PWD)/cluster/conf/$i/redis.conf
-        echo "appendonly yes" >> $(PWD)/cluster/conf/$i/redis.conf
+        mkdir -p ./cluster/conf/$i
+        cp ./conf/redis.conf ./cluster/conf/$i
+        echo "cluster-enabled yes" >> ./cluster/conf/$i/redis.conf
+        echo "cluster-config-file nodes.conf" >> ./cluster/conf/$i/redis.conf
+        echo "cluster-node-timeout 5000" >> ./cluster/conf/$i/redis.conf
+        echo "appendonly yes" >> ./cluster/conf/$i/redis.conf
         printf "Creating \033[1;4mredis-cluster-$i\033[0m container: \n"
         
         if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
             PASSWORD=$4
-            echo "tls-cluster yes" >>  $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-replication yes" >>  $(PWD)/cluster/conf/$i/redis.conf
-            echo "port 0" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-port 6379" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-cert-file /etc/ssl/certs/redis.crt" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-key-file /etc/ssl/certs/redis.key" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-ca-cert-file /etc/ssl/certs/ca.crt" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-auth-clients no" >> $(PWD)/cluster/conf/$i/redis.conf
-            echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >> $(PWD)/cluster/conf/$i/redis.conf
+            echo "tls-cluster yes" >>  ./cluster/conf/$i/redis.conf
+            echo "tls-replication yes" >>  ./cluster/conf/$i/redis.conf
+            echo "port 0" >> ./cluster/conf/$i/redis.conf
+            echo "tls-port 6379" >> ./cluster/conf/$i/redis.conf
+            echo "tls-cert-file /etc/ssl/certs/redis.crt" >> ./cluster/conf/$i/redis.conf
+            echo "tls-key-file /etc/ssl/certs/redis.key" >> ./cluster/conf/$i/redis.conf
+            echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >> ./cluster/conf/$i/redis.conf
+            echo "tls-ca-cert-file /etc/ssl/certs/ca.crt" >> ./cluster/conf/$i/redis.conf
+            echo "tls-auth-clients no" >> ./cluster/conf/$i/redis.conf
+            echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >> ./cluster/conf/$i/redis.conf
 
             docker run --name redis-cluster-$i \
             --detach --sysctl net.core.somaxconn=511 \

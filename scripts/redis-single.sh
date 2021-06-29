@@ -6,18 +6,18 @@ if [ ! "$(docker ps -q -f name=redis-demo)" ]; then
         printf "Stopped \033[1;4mredis-demo\033[0m container is removed now. \n"
     fi
     printf "Creating new \033[1;4mredis-demo\033[0m container: \n"
-    mkdir -p $(PWD)/single/conf/
-    cp $(PWD)/conf/redis.conf $(PWD)/single/conf/
+    mkdir -p ./single/conf/
+    cp ./conf/redis.conf ./single/conf/
     
     if [ ! -z "$2" ] && [ "$2" = "TLS" ]; then
-        echo "port 0" >> $(PWD)/single/conf/redis.conf
-        echo "tls-port 6379" >> $(PWD)/single/conf/redis.conf
-        echo "tls-cert-file /etc/ssl/certs/redis.crt" >> $(PWD)/single/conf/redis.conf
-        echo "tls-key-file /etc/ssl/certs/redis.key" >> $(PWD)/single/conf/redis.conf
-        echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >> $(PWD)/single/conf/redis.conf
-        echo "tls-ca-cert-file /etc/ssl/certs/ca.crt" >> $(PWD)/single/conf/redis.conf
-        echo "tls-auth-clients no" >> $(PWD)/single/conf/redis.conf
-        echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >> $(PWD)/single/conf/redis.conf
+        echo "port 0" >> ./single/conf/redis.conf
+        echo "tls-port 6379" >> ./single/conf/redis.conf
+        echo "tls-cert-file /etc/ssl/certs/redis.crt" >> ./single/conf/redis.conf
+        echo "tls-key-file /etc/ssl/certs/redis.key" >> ./single/conf/redis.conf
+        echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >> ./single/conf/redis.conf
+        echo "tls-ca-cert-file /etc/ssl/certs/ca.crt" >> ./single/conf/redis.conf
+        echo "tls-auth-clients no" >> ./single/conf/redis.conf
+        echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >> ./single/conf/redis.conf
 
         docker run --name redis-demo \
         --detach --sysctl net.core.somaxconn=511 \

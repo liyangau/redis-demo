@@ -24,52 +24,52 @@ REDIS_SENTINEL_NUMBER=1
 .PHONY: redis-single redis-single-ssl redis/redis.conf
 
 redis-single: redis/redis.conf
-	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)"
+	@sh ./scripts/redis-single.sh "$(NETWORK_NAME)"
 
 redis-single-ssl: redis/redis.conf redis-generate-ssl
-	@sh $(PWD)/scripts/redis-single.sh "$(NETWORK_NAME)" "TLS"
+	@sh ./scripts/redis-single.sh "$(NETWORK_NAME)" "TLS"
 	
 redis/redis.conf: redis-check-network
-	@mkdir -p $(PWD)/conf
-	@wget --quiet $(REDIS_6_OFFICIAL_CONF) -O $(PWD)/conf/redis.conf
-	@sed -i '' 's/bind 127.0.0.1/bind 0.0.0.0/g' $(PWD)/conf/redis.conf
-	@echo "requirepass \"$(REDIS_PASSWORD)\"" >>  $(PWD)/conf/redis.conf
-	@echo "masterauth \"$(REDIS_PASSWORD)\"" >>  $(PWD)/conf/redis.conf
+	@mkdir -p ./conf
+	@wget --quiet $(REDIS_6_OFFICIAL_CONF) -O ./conf/redis.conf
+	@perl -pi -e 's/bind 127.0.0.1/bind 0.0.0.0/g' ./conf/redis.conf
+	@echo "requirepass \"$(REDIS_PASSWORD)\"" >>  ./conf/redis.conf
+	@echo "masterauth \"$(REDIS_PASSWORD)\"" >>  ./conf/redis.conf
 ####################################################################################
 # Redis Replication Creation
 ####################################################################################
 .PHONY: redis-cluster redis-redis-cluster-ssl
 redis-cluster : redis/redis.conf
-	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "$(REDIS_PASSWORD)"
+	@sh ./scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "$(REDIS_PASSWORD)"
 
 redis-cluster-ssl : redis/redis.conf redis-generate-ssl 
-	@sh $(PWD)/scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "TLS" "$(REDIS_PASSWORD)"
+	@sh ./scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "TLS" "$(REDIS_PASSWORD)"
 ####################################################################################
 # Redis Replication Creation
 ####################################################################################
 .PHONY: redis-replication redis-replication-ssl
 redis-replication : redis-single
-	@sh $(PWD)/scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)"
+	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)"
 
 redis-replication-ssl : redis-generate-ssl redis-single-ssl
-	@sh $(PWD)/scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
+	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
 # Redis Sentinel Creation
 ####################################################################################
 .PHONY: sentinel-cluster sentinel-cluster-ssl
 redis-sentinel : redis-replication
-	@sh $(PWD)/scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)"
+	@sh ./scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)"
 
 redis-sentinel-ssl : redis-generate-ssl redis-replication-ssl
-	@sh $(PWD)/scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)" "TLS"
+	@sh ./scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)" "TLS"
 ####################################################################################
 # Generate self-sign cert for TLS connection
 ####################################################################################
 .PHONY: redis-generate-ssl
 redis-generate-ssl:
-	@wget --quiet $(REDIS_GEN_SSL_SH) -O $(PWD)/gencert.sh
-	@sed -i '' 's/generate_cert redis "Generic-cert"/generate_cert redis "$(REDIS_SSL_CN)"/g' $(PWD)/gencert.sh
-	@sed -i '' 's/tests\/tls/tls/g' $(PWD)/gencert.sh
+	@wget --quiet $(REDIS_GEN_SSL_SH) -O ./gencert.sh
+	@perl -pi -e 's/generate_cert redis "Generic-cert"/generate_cert redis "$(REDIS_SSL_CN)"/g' ./gencert.sh
+	@perl -pi -e 's/tests\/tls/tls/g' ./gencert.sh
 	@chmod +x gencert.sh
 	@sh gencert.sh
 ####################################################################################
@@ -77,7 +77,7 @@ redis-generate-ssl:
 ####################################################################################
 .PHONY: redis-cleanup redis-check-network
 redis-cleanup : 
-	@sh $(PWD)/scripts/redis-cleanup.sh
+	@sh ./scripts/redis-cleanup.sh
 
 redis-check-network : 
 	@docker network inspect $(NETWORK_NAME) >/dev/null 2>&1 || docker network create --driver bridge $(NETWORK_NAME) >/dev/null

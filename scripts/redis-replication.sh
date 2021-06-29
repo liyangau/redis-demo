@@ -6,21 +6,21 @@ if [ "${1}" -lt 9 ] && [ "${1}" -gt 0 ]; then
     
     for i in $(seq 1 $numberOfSlaves)    
     do
-        mkdir -p $(PWD)/replication/conf/$i
-        cp $(PWD)/conf/redis.conf $(PWD)/replication/conf/$i
-        echo "slaveof redis-demo 6379 " >>  $(PWD)/replication/conf/$i/redis.conf
+        mkdir -p ./replication/conf/$i
+        cp ./conf/redis.conf ./replication/conf/$i
+        echo "slaveof redis-demo 6379 " >>  ./replication/conf/$i/redis.conf
         printf "Creating \033[1;4mredis-$i\033[0m container: \n"     
 
         if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
-            echo "tls-replication yes" >>  $(PWD)/replication/conf/$i/redis.conf
-            echo "port 0" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-port 6379" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-cert-file /etc/ssl/certs/redis.crt" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-key-file /etc/ssl/certs/redis.key" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-ca-cert-file /etc/ssl/certs/ca.crt" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-auth-clients no" >> $(PWD)/replication/conf/$i/redis.conf
-            echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >> $(PWD)/replication/conf/$i/redis.conf
+            echo "tls-replication yes" >>  ./replication/conf/$i/redis.conf
+            echo "port 0" >> ./replication/conf/$i/redis.conf
+            echo "tls-port 6379" >> ./replication/conf/$i/redis.conf
+            echo "tls-cert-file /etc/ssl/certs/redis.crt" >> ./replication/conf/$i/redis.conf
+            echo "tls-key-file /etc/ssl/certs/redis.key" >> ./replication/conf/$i/redis.conf
+            echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >> ./replication/conf/$i/redis.conf
+            echo "tls-ca-cert-file /etc/ssl/certs/ca.crt" >> ./replication/conf/$i/redis.conf
+            echo "tls-auth-clients no" >> ./replication/conf/$i/redis.conf
+            echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >> ./replication/conf/$i/redis.conf
 
             docker run --name redis-$i \
             --detach --sysctl net.core.somaxconn=511 \
