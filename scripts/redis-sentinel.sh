@@ -30,15 +30,15 @@ do
 
         docker run --name redis-sentinel-$i \
         --detach --sysctl net.core.somaxconn=511 \
-        --volume $(PWD)/sentinel/conf/$i/:/etc/redis/ \
-        --volume $(PWD)/tls:/etc/ssl/certs \
+        --volume $(pwd)/sentinel/conf/$i/:/etc/redis/ \
+        --volume $(pwd)/tls:/etc/ssl/certs \
         --network $3 \
         redis:6.0-alpine \
         redis-sentinel /etc/redis/sentinel.conf
     else
         docker run --name redis-sentinel-$i \
         --detach --sysctl net.core.somaxconn=511 \
-        --volume $(PWD)/sentinel/conf/$i/:/etc/redis/ \
+        --volume $(pwd)/sentinel/conf/$i/:/etc/redis/ \
         --network $3 \
         redis:6.0-alpine \
         redis-sentinel /etc/redis/sentinel.conf

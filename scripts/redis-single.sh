@@ -21,15 +21,15 @@ if [ ! "$(docker ps -q -f name=redis-demo)" ]; then
 
         docker run --name redis-demo \
         --detach --sysctl net.core.somaxconn=511 \
-        --volume $(PWD)/single/conf:/etc/redis/ \
-        --volume $(PWD)/tls:/etc/ssl/certs \
+        --volume $(pwd)/single/conf:/etc/redis/ \
+        --volume $(pwd)/tls:/etc/ssl/certs \
         --network $1 \
         redis:6.0-alpine \
         redis-server /etc/redis/redis.conf
     else
         docker run --name redis-demo \
         --detach --sysctl net.core.somaxconn=511 \
-        --volume $(PWD)/single/conf:/etc/redis/ \
+        --volume $(pwd)/single/conf:/etc/redis/ \
         --network $1 \
         redis:6.0-alpine \
         redis-server /etc/redis/redis.conf

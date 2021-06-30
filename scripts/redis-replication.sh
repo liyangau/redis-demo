@@ -24,15 +24,15 @@ if [ "${1}" -lt 9 ] && [ "${1}" -gt 0 ]; then
 
             docker run --name redis-$i \
             --detach --sysctl net.core.somaxconn=511 \
-            --volume $(PWD)/replication/conf/$i/:/etc/redis/ \
-            --volume $(PWD)/tls:/etc/ssl/certs \
+            --volume $(pwd)/replication/conf/$i/:/etc/redis/ \
+            --volume $(pwd)/tls:/etc/ssl/certs \
             --network $2 \
             redis:6.0-alpine \
             redis-server /etc/redis/redis.conf
         else
             docker run --name redis-$i \
             --detach --sysctl net.core.somaxconn=511 \
-            --volume $(PWD)/replication/conf/$i/:/etc/redis/ \
+            --volume $(pwd)/replication/conf/$i/:/etc/redis/ \
             --network $2 \
             redis:6.0-alpine \
             redis-server /etc/redis/redis.conf

@@ -32,8 +32,8 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
 
             docker run --name redis-cluster-$i \
             --detach --sysctl net.core.somaxconn=511 \
-            --volume $(PWD)/cluster/conf/$i/:/etc/redis/ \
-            --volume $(PWD)/tls:/etc/ssl/certs \
+            --volume $(pwd)/cluster/conf/$i/:/etc/redis/ \
+            --volume $(pwd)/tls:/etc/ssl/certs \
             --network $2 \
             redis:6.0-alpine \
             redis-server /etc/redis/redis.conf
@@ -41,7 +41,7 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
             PASSWORD=$3
             docker run --name redis-cluster-$i \
             --detach --sysctl net.core.somaxconn=511 \
-            --volume $(PWD)/cluster/conf/$i/:/etc/redis/ \
+            --volume $(pwd)/cluster/conf/$i/:/etc/redis/ \
             --network $2 \
             redis:6.0-alpine \
             redis-server /etc/redis/redis.conf
@@ -57,8 +57,8 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
 
     if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
         docker run -i --rm \
-        --volume $(PWD)/cluster/conf/1/:/etc/redis/ \
-        --volume $(PWD)/tls:/etc/ssl/certs \
+        --volume $(pwd)/cluster/conf/1/:/etc/redis/ \
+        --volume $(pwd)/tls:/etc/ssl/certs \
         --network $2 \
         redis:6.0-alpine \
         redis-cli --tls \
