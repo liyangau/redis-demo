@@ -16,7 +16,7 @@ REDIS_SSL_CN=redis.test.demo
 REDIS_REPLICATION_SLAVES_NUMBER=2
 REDIS_CLUSTER_NODES_NUMBER=6
 REDIS_SENTINEL_PORT=26379
-REDIS_SENTINEL_NUMBER=1
+REDIS_SENTINEL_NUMBER=3
 
 ####################################################################################
 # Single Redis container creation
