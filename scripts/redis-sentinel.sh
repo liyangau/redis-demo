@@ -4,7 +4,7 @@ numberOfSentinel=$4
 for i in $(seq 1 $numberOfSentinel)    
 do
     mkdir -p ./sentinel/conf/$i
-    rm ./sentinel/conf/$i/sentinel.conf 2> /dev/null
+    sudo rm ./sentinel/conf/$i/sentinel.conf 2> /dev/null
     touch ./sentinel/conf/$i/sentinel.conf
     echo "port $2" >>  ./sentinel/conf/$i/sentinel.conf
     echo "sentinel deny-scripts-reconfig yes" >>  ./sentinel/conf/$i/sentinel.conf
@@ -18,7 +18,7 @@ do
 
     if [ ! -z "$5" ] && [ "$5" = "TLS" ]; then
         echo "port 0" >>  ./sentinel/conf/$i/sentinel.conf
-        echo "tls-port 6379" >>  ./sentinel/conf/$i/sentinel.conf
+        echo "tls-port 26379" >>  ./sentinel/conf/$i/sentinel.conf
         echo "tls-cert-file /etc/ssl/certs/redis.crt" >>  ./sentinel/conf/$i/sentinel.conf
         echo "tls-key-file /etc/ssl/certs/redis.key" >>  ./sentinel/conf/$i/sentinel.conf
         echo "tls-dh-params-file /etc/ssl/certs/redis.dh" >>  ./sentinel/conf/$i/sentinel.conf
@@ -26,7 +26,6 @@ do
         echo "tls-auth-clients no" >>  ./sentinel/conf/$i/sentinel.conf
         echo "tls-protocols \"TLSv1.2 TLSv1.3\"" >>  ./sentinel/conf/$i/sentinel.conf
         echo "tls-replication yes" >>  ./sentinel/conf/$i/sentinel.conf
-        echo "tls-cluster yes" >>  ./sentinel/conf/$i/sentinel.conf
 
         docker run --name redis-sentinel-$i \
         --detach --sysctl net.core.somaxconn=511 \
@@ -44,3 +43,14 @@ do
         redis-sentinel /etc/redis/sentinel.conf
     fi
 done
+
+for id in `seq 1 $numberOfSentinel`; do
+    HOST_IP=`docker inspect -f "{{(index .NetworkSettings.Networks \"$3\").IPAddress}}" "redis-sentinel-$id"`;
+    SENTINEL_HOSTS="$SENTINEL_HOSTS$HOST_IP:26379 ";
+    SENTINEL_NAMES="$SENTINEL_NAMES"redis-sentinel-"$id:26379 ";
+done
+
+SENTINEL_HOSTS=`echo $SENTINEL_HOSTS | tr ' ' ','`
+SENTINEL_NAMES=`echo $SENTINEL_NAMES | tr ' ' ','`
+echo "Your sentinel IPs are:" ${SENTINEL_HOSTS}
+echo "Your sentinel hostnames are:" ${SENTINEL_NAMES}

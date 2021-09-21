@@ -13,7 +13,7 @@ REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/ge
 NETWORK_NAME=redis-demo
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
-REDIS_REPLICATION_SLAVES_NUMBER=2
+REDIS_REPLICATION_SLAVES_NUMBER=3
 REDIS_CLUSTER_NODES_NUMBER=6
 REDIS_SENTINEL_PORT=26379
 REDIS_SENTINEL_NUMBER=3
@@ -51,7 +51,7 @@ redis-cluster-ssl : redis/redis.conf redis-generate-ssl
 redis-replication : redis-single
 	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)"
 
-redis-replication-ssl : redis-generate-ssl redis-single-ssl
+redis-replication-ssl : redis-single-ssl
 	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
 # Redis Sentinel Creation
@@ -60,7 +60,7 @@ redis-replication-ssl : redis-generate-ssl redis-single-ssl
 redis-sentinel : redis-replication
 	@sh ./scripts/redis-sentinel.sh "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)"
 
-redis-sentinel-ssl : redis-generate-ssl redis-replication-ssl
+redis-sentinel-ssl : redis-replication-ssl
 	@sh ./scripts/redis-sentinel.sh  "$(REDIS_PASSWORD)" "$(REDIS_SENTINEL_PORT)" "$(NETWORK_NAME)" "$(REDIS_SENTINEL_NUMBER)" "TLS"
 ####################################################################################
 # Generate self-sign cert for TLS connection
@@ -68,8 +68,10 @@ redis-sentinel-ssl : redis-generate-ssl redis-replication-ssl
 .PHONY: redis-generate-ssl
 redis-generate-ssl:
 	@wget --quiet $(REDIS_GEN_SSL_SH) -O ./gencert.sh
-	@perl -pi -e 's/generate_cert redis "Generic-cert"/generate_cert redis "$(REDIS_SSL_CN)"/g' ./gencert.sh
 	@perl -pi -e 's/tests\/tls/tls/g' ./gencert.sh
+	@perl -i -nle 'print if !/^generate_cert /' ./gencert.sh
+	@echo "generate_cert redis \"$(REDIS_SSL_CN)\"" >>  ./gencert.sh
+	@echo "sudo chmod 755 -R tls" >>  ./gencert.sh
 	@chmod +x gencert.sh
 	@sh gencert.sh
 ####################################################################################

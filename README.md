@@ -4,7 +4,7 @@
 
 This repo helps you to spin up redis quickly. You can start a standalone redis, redis replication, redis cluster or redis sentinel quickly with docker.
 
-Before you start, please understand this repo is designed to be used for testing purposes only. It does not have persistent storage hence all data in your test will be deleted once you stop/remove the container. Please use it at your own discretion.
+Before you start, please understand this repo is designed to be used for testing purposes only. It does not have persistent storage hence all data in your test will be deleted once you stop/remove the container. Also in order to avoid file permission errors, a few commands requires root access. If you know how to fix file permission issue between docker container and host, please submit a PR to help the project.
 
 ### Clone this repo
 
@@ -39,13 +39,17 @@ There are a few variables you can change on `Makefile`
 
   Common name of the SSL certificate. change it to anything suit your system, it is self-sign and won't be trusted  unless your system choose to. (Default: `redis.test.demo`)
 
-- **REDIS_CLUSTER_SLAVES_NUMBER**
+- **REDIS_REPLICATION_SLAVES_NUMBER**
 
   How many slaves in the redis cluster you need. This support from 3 to 8 slaves. You can spin up more if you want but I limit my code to run at most 8 containers. (Default: `3`)
 
+- **REDIS_CLUSTER_NODES_NUMBER**
+
+  How many nodes on your redis cluster. This support from 6 to 12 Nodes. My script create 1 replica per master node so setting this value to 6 will give you a cluster with 3 master node and 1 replica for each master. (Default: `6`)
+
 - **REDIS_SENTINEL_PORT**
 
-  You can set default sentinel port with this variable. (Default: `5000`)
+  You can set default sentinel port with this variable. (Default: `26379`)
 
 ### Commands
 

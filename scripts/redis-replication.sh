@@ -7,6 +7,7 @@ if [ "${1}" -lt 9 ] && [ "${1}" -gt 0 ]; then
     for i in $(seq 1 $numberOfSlaves)    
     do
         mkdir -p ./replication/conf/$i
+        sudo rm ./replication/conf/$i/redis.conf
         cp ./conf/redis.conf ./replication/conf/$i
         echo "slaveof redis-demo 6379 " >>  ./replication/conf/$i/redis.conf
         printf "Creating \033[1;4mredis-$i\033[0m container: \n"     

@@ -48,13 +48,12 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
         fi
     done
     
-    for id in `seq 1 $numberOfNode`; do 
-        HOST_IP=`docker inspect -f "{{(index .NetworkSettings.Networks \"$2\").IPAddress}}" "redis-cluster-"$id`; 
+    for id in `seq 1 $numberOfNode`; do
+        HOST_IP=`docker inspect -f "{{(index .NetworkSettings.Networks \"$2\").IPAddress}}" "redis-cluster-$id"`; 
         CLUSTER_HOSTS="$CLUSTER_HOSTS$HOST_IP:6379 "; 
         CLUSTER_NAMES="$CLUSTER_NAMES"redis-cluster-"$id:6379 "; 
     done
     
-
     if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
         docker run -i --rm \
         --volume $(pwd)/cluster/conf/1/:/etc/redis/ \
@@ -71,10 +70,10 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
             redis-cli --no-auth-warning -a $3 --cluster create $CLUSTER_HOSTS --cluster-yes --cluster-replicas 1;        
     fi
 
-    CLUSTER_HOSTS=${CLUSTER_HOSTS// /,}
-    CLUSTER_NAMES=${CLUSTER_NAMES// /,}
-    echo "Your cluster host IPs are:" ${CLUSTER_HOSTS%?}
-    echo "Your cluster hostnames are:" ${CLUSTER_NAMES%?}
+    CLUSTER_HOSTS=`echo $CLUSTER_HOSTS | tr ' ' ','`
+    CLUSTER_NAMES=`echo $CLUSTER_NAMES | tr ' ' ','`
+    echo "Your cluster host IPs are:" ${CLUSTER_HOSTS}
+    echo "Your cluster hostnames are:" ${CLUSTER_NAMES}
 else
     echo "\nWe only support creating a redis cluster with 6 to 12 nodes."
     exit
