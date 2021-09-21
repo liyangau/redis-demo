@@ -71,7 +71,7 @@ redis-generate-ssl:
 	@perl -pi -e 's/tests\/tls/tls/g' ./gencert.sh
 	@perl -i -nle 'print if !/^generate_cert /' ./gencert.sh
 	@echo "generate_cert redis \"$(REDIS_SSL_CN)\"" >>  ./gencert.sh
-	@echo "sudo chmod 755 -R tls" >>  ./gencert.sh
+	@echo "sudo chmod -R 755 tls" >>  ./gencert.sh
 	@chmod +x gencert.sh
 	@sh gencert.sh
 ####################################################################################

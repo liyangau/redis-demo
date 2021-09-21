@@ -10,6 +10,7 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
     for i in $(seq 1 $numberOfNodes)    
     do
         mkdir -p ./cluster/conf/$i
+        sudo rm ./cluster/conf/$i/redis.conf 2> /dev/null
         cp ./conf/redis.conf ./cluster/conf/$i
         echo "cluster-enabled yes" >> ./cluster/conf/$i/redis.conf
         echo "cluster-config-file nodes.conf" >> ./cluster/conf/$i/redis.conf
