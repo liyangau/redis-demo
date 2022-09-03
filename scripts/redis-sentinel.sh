@@ -1,11 +1,11 @@
 #! /bin/sh
 numberOfSentinel=$4
 
-for i in $(seq 1 $numberOfSentinel)    
+for i in $(seq 1 $numberOfSentinel)
 do
     mkdir -p ./sentinel/conf/$i
     sudo rm ./sentinel/conf/$i/sentinel.conf 2> /dev/null
-    touch ./sentinel/conf/$i/sentinel.conf
+    touch ./sentinel/conf/$i/sentinel.confz
     echo "port $2" >>  ./sentinel/conf/$i/sentinel.conf
     echo "sentinel deny-scripts-reconfig yes" >>  ./sentinel/conf/$i/sentinel.conf
     echo "requirepass A-SUPER-STRONG-DEMO-PASSWORD" >>  ./sentinel/conf/$i/sentinel.conf

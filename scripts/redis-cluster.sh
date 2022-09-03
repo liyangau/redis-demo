@@ -6,8 +6,8 @@ CLUSTER_NAMES=''
 
 if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
     numberOfNodes=$1
-    
-    for i in $(seq 1 $numberOfNodes)    
+
+    for i in $(seq 1 $numberOfNodes)
     do
         mkdir -p ./cluster/conf/$i
         sudo rm ./cluster/conf/$i/redis.conf 2> /dev/null
@@ -17,7 +17,7 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
         echo "cluster-node-timeout 5000" >> ./cluster/conf/$i/redis.conf
         echo "appendonly yes" >> ./cluster/conf/$i/redis.conf
         printf "Creating \033[1;4mredis-cluster-$i\033[0m container: \n"
-        
+
         if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
             PASSWORD=$4
             echo "tls-cluster yes" >>  ./cluster/conf/$i/redis.conf
@@ -48,13 +48,13 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
             redis-server /etc/redis/redis.conf
         fi
     done
-    
+
     for id in `seq 1 $numberOfNode`; do
-        HOST_IP=`docker inspect -f "{{(index .NetworkSettings.Networks \"$2\").IPAddress}}" "redis-cluster-$id"`; 
-        CLUSTER_HOSTS="$CLUSTER_HOSTS$HOST_IP:6379 "; 
-        CLUSTER_NAMES="$CLUSTER_NAMES"redis-cluster-"$id:6379 "; 
+        HOST_IP=`docker inspect -f "{{(index .NetworkSettings.Networks \"$2\").IPAddress}}" "redis-cluster-$id"`;
+        CLUSTER_HOSTS="$CLUSTER_HOSTS$HOST_IP:6379 ";
+        CLUSTER_NAMES="$CLUSTER_NAMES"redis-cluster-"$id:6379 ";
     done
-    
+
     if [ ! -z "$3" ] && [ "$3" = "TLS" ]; then
         docker run -i --rm \
         --volume $(pwd)/cluster/conf/1/:/etc/redis/ \
@@ -68,7 +68,7 @@ if [ "${1}" -lt 13 ] && [ "${1}" -gt 5 ]; then
         -a $4 --cluster create $CLUSTER_HOSTS --cluster-yes --cluster-replicas 1;
     else
         docker run -i --rm --net $2 redis:6.0-alpine \
-            redis-cli --no-auth-warning -a $3 --cluster create $CLUSTER_HOSTS --cluster-yes --cluster-replicas 1;        
+            redis-cli --no-auth-warning -a $3 --cluster create $CLUSTER_HOSTS --cluster-yes --cluster-replicas 1;
     fi
 
     CLUSTER_HOSTS=`echo $CLUSTER_HOSTS | tr ' ' ','`

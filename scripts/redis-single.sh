@@ -9,7 +9,7 @@ if [ ! "$(docker ps -q -f name=redis-demo)" ]; then
     mkdir -p ./single/conf/
     sudo rm ./single/conf/redis.conf 2> /dev/null
     cp ./conf/redis.conf ./single/conf/
-    
+
     if [ ! -z "$2" ] && [ "$2" = "TLS" ]; then
         echo "port 0" >> ./single/conf/redis.conf
         echo "tls-port 6379" >> ./single/conf/redis.conf

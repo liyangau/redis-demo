@@ -4,7 +4,7 @@
 
 This repo helps you to spin up redis quickly. You can start a standalone redis, redis replication, redis cluster or redis sentinel quickly with docker.
 
-Before you start, please understand this repo is designed to be used for testing purposes only. It does not have persistent storage hence all data in your test will be deleted once you stop/remove the container. Also in order to avoid file permission errors, a few commands requires root access. If you know how to fix file permission issue between docker container and host, please submit a PR to help the project.
+Before you start, please understand this repo is designed to be used for testing purposes only. It does not have persistent storage hence all data in your test will be deleted once you stop/remove the container. Also in order to avoid file permission errors, a few commands requires root access. If you know how to fix file permission issue (I belive this is related to redis container running as root), please feel free to submit a PR.
 
 ### Clone this repo
 
@@ -16,12 +16,9 @@ You will have everything you need inside `redis-demo/` folder.
 
 ### Create Network
 
-```bash
-docker network create redis-demo
-```
+These redis containers need to be run on an external network. By default they are run in network `$NETWORK_NAME`.
 
-These redis containers need to be run on an external network. By default they are run in network `redis-demo`.
-You can define the network vis **NETWORK_NAME** variable below. 
+If this network does not exist, this script will create this network for you.
 
 ### Change variables to suit your needs
 
@@ -53,11 +50,11 @@ There are a few variables you can change on `Makefile`
 
 ### Commands
 
-> When `-ssl` command is used, this script will generate the self-sign certificates and mount the certificates inside the containers and added the needful configuration to `redis.conf` or `sentinel.conf` automatically. 
+> When `-ssl` command is used, this script will generate the self-sign certificates and mount the certificates inside the containers and added the needful configuration to `redis.conf` or `sentinel.conf` automatically.
 
 #### Standalone Redis
 
-- `make redis-single` 
+- `make redis-single`
 - `make redis-single-ssl`
 
 You can use one of these two commands to start a single redis container `redis-demo`. The configure file is downloaded from redis [official website](https://raw.githubusercontent.com/redis/redis/6.0/redis.conf). In this setup, my script will change `bind 127.0.0.1` to `bind 0.0.0.0` and inject password define in `REDIS_PASSWORD` to the config file.
@@ -74,7 +71,7 @@ You can use one of these two commands to start a redis cluster. You need to use 
 - `make redis-replication`
 - `make redis-replication-ssl`
 
-You can use one of these two commands to start a redis replication. The master container is `redis-demo` and the number of slaves is definied with **REDIS_REPLICATION_SLAVES_NUMBER** variable. By default this script create 3 slaves. 
+You can use one of these two commands to start a redis replication. The master container is `redis-demo` and the number of slaves is definied with **REDIS_REPLICATION_SLAVES_NUMBER** variable. By default this script create 3 slaves.
 
 #### Redis Sentinel
 
@@ -87,4 +84,4 @@ These two command will spin up a redis cluster first and then start 3 sentinel c
 
 - `make redis-cleanup`
 
-This command will find all container has `redis` in it, stop and remove these container. CAUTION: This command removes **ALL** contaners hence data inside the container will be deleted forever.
+This command will find all container has `redis` in it, stop and remove these container. CAUTION: This command removes **ALL** contaners has `redis` keyword in container name.
