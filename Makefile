@@ -7,10 +7,10 @@
 #
 #
 # For more information, please check https://github.com/liyangau/redis-demo
-REDIS_6_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
+REDIS_7_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
 REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
 
-NETWORK_NAME=redis-demo
+NETWORK_NAME=kong-ee-net
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
 REDIS_REPLICATION_SLAVES_NUMBER=3
@@ -31,7 +31,7 @@ redis-single-ssl: redis/redis.conf redis-generate-ssl
 
 redis/redis.conf: redis-check-network
 	@mkdir -p ./conf
-	@wget --quiet $(REDIS_6_OFFICIAL_CONF) -O ./conf/redis.conf
+	@wget --quiet $(REDIS_7_OFFICIAL_CONF) -O ./conf/redis.conf
 	@perl -pi -e 's/bind 127.0.0.1/bind 0.0.0.0/g' ./conf/redis.conf
 	@echo "requirepass \"$(REDIS_PASSWORD)\"" >>  ./conf/redis.conf
 	@echo "masterauth \"$(REDIS_PASSWORD)\"" >>  ./conf/redis.conf
