@@ -7,10 +7,10 @@
 #
 #
 # For more information, please check https://github.com/liyangau/redis-demo
-REDIS_7_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/6.0/redis.conf
+REDIS_7_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/7.0/redis.conf
 REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
 
-NETWORK_NAME=kong-ee-net
+NETWORK_NAME=redis-demo
 REDIS_PASSWORD=A-SUPER-STRONG-DEMO-PASSWORD
 REDIS_SSL_CN=redis.test.demo
 REDIS_REPLICATION_SLAVES_NUMBER=3
