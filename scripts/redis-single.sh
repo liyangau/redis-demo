@@ -7,7 +7,7 @@ if [ ! "$(docker ps -q -f name=redis-demo)" ]; then
   fi
   printf "Creating new \033[1;4mredis-demo\033[0m container: \n"
   mkdir -p ./single/conf/
-  # sudo rm ./single/conf/redis.conf 2> /dev/null
+  sudo rm ./single/conf/redis.conf 2> /dev/null
   cp ./conf/redis.conf ./single/conf/
 
   if [ ! -z "$2" ] && [ "$2" = "TLS" ]; then
