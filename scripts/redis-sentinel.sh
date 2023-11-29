@@ -15,7 +15,7 @@ if [ ! "$(docker ps -q -f name=redis-sentinel-1)" ]; then
     echo "sentinel failover-timeout mymaster 60000" >>./sentinel/conf/$i/sentinel.conf
     echo "sentinel parallel-syncs mymaster 1" >>./sentinel/conf/$i/sentinel.conf
     echo "sentinel auth-pass mymaster $1" >>./sentinel/conf/$i/sentinel.conf
-    printf "Creating \033[1;4mredis-sentinel-$i\033[0m container: \n"
+    printf "Creating redis-sentinel-$i container: "
 
     if [ ! -z "$5" ] && [ "$5" = "TLS" ]; then
       echo "port 0" >>./sentinel/conf/$i/sentinel.conf
@@ -33,7 +33,6 @@ if [ ! "$(docker ps -q -f name=redis-sentinel-1)" ]; then
         --volume $(pwd)/sentinel/conf/$i/:/etc/redis/ \
         --volume $(pwd)/tls:/etc/ssl/certs \
         --network $3 \
-        --user $UID:$GID \
         --publish $2 \
         redis:7.0-alpine \
         redis-sentinel /etc/redis/sentinel.conf
@@ -42,7 +41,6 @@ if [ ! "$(docker ps -q -f name=redis-sentinel-1)" ]; then
         --detach --sysctl net.core.somaxconn=511 \
         --volume $(pwd)/sentinel/conf/$i/:/etc/redis/ \
         --network $3 \
-        --user $UID:$GID \
         --publish $2 \
         redis:7.0-alpine \
         redis-sentinel /etc/redis/sentinel.conf
@@ -57,9 +55,9 @@ if [ ! "$(docker ps -q -f name=redis-sentinel-1)" ]; then
   SENTINEL_ON_HOSTS=$(echo $SENTINEL_ON_HOSTS | tr ' ' ',')
   SENTINEL_IP=$(echo $SENTINEL_IP | tr ' ' ',')
   SENTINEL_NAMES=$(echo $SENTINEL_NAMES | tr ' ' ',')
-  echo "\nYour sentinel nodes on host IPs and ports are:\n${SENTINEL_ON_HOSTS}"
-  echo "\nIn docker network $3, your sentinel nodes hostnames and ports are:\n${SENTINEL_IP}"
-  echo "\nIn docker network $3, your sentinel nodes IPs and ports are:\n${SENTINEL_NAMES}"
+  echo "Your sentinel nodes on host IPs and ports are:${SENTINEL_ON_HOSTS}"
+  echo "In docker network $3, your sentinel nodes hostnames and ports are:${SENTINEL_IP}"
+  echo "In docker network $3, your sentinel nodes IPs and ports are:${SENTINEL_NAMES}"
 else
-  echo "\033[1;4mredis sentinel\033[0m is already running."
+  echo "redis sentinel is already running."
 fi

@@ -7,7 +7,8 @@
 #
 #
 # For more information, please check https://github.com/liyangau/redis-demo
-REDIS_7_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/7.0/redis.conf
+REDIS_VERSION=7.2
+REDIS_OFFICIAL_CONF=https://raw.githubusercontent.com/redis/redis/$(REDIS_VERSION)/redis.conf
 REDIS_GEN_SSL_SH=https://raw.githubusercontent.com/redis/redis/unstable/utils/gen-test-certs.sh
 
 NETWORK_NAME=redis-demo
@@ -24,14 +25,14 @@ REDIS_SENTINEL_NUMBER=3
 .PHONY: redis-single redis-single-ssl redis/redis.conf
 
 redis-single: redis/redis.conf
-	@sh ./scripts/redis-single.sh "$(NETWORK_NAME)"
+	@sh ./scripts/redis-single.sh "$(NETWORK_NAME)" "$(REDIS_VERSION)"
 
 redis-single-ssl: redis/redis.conf redis-generate-ssl
-	@sh ./scripts/redis-single.sh "$(NETWORK_NAME)" "TLS"
+	@sh ./scripts/redis-single.sh "$(NETWORK_NAME)" "$(REDIS_VERSION)" "TLS"
 
 redis/redis.conf: redis-check-network
 	@mkdir -p ./conf
-	@wget --quiet $(REDIS_7_OFFICIAL_CONF) -O ./conf/redis.conf
+	@wget --quiet $(REDIS_OFFICIAL_CONF) -O ./conf/redis.conf
 	@perl -pi -e 's/bind 127.0.0.1/bind 0.0.0.0/g' ./conf/redis.conf
 	@echo "requirepass \"$(REDIS_PASSWORD)\"" >>  ./conf/redis.conf
 	@echo "masterauth \"$(REDIS_PASSWORD)\"" >>  ./conf/redis.conf
@@ -40,19 +41,19 @@ redis/redis.conf: redis-check-network
 ####################################################################################
 .PHONY: redis-cluster redis-redis-cluster-ssl
 redis-cluster : redis/redis.conf
-	@sh ./scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "$(REDIS_PASSWORD)"
+	@sh ./scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(REDIS_VERSION)" "$(NETWORK_NAME)" "$(REDIS_PASSWORD)"
 
 redis-cluster-ssl : redis/redis.conf redis-generate-ssl
-	@sh ./scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(NETWORK_NAME)" "TLS" "$(REDIS_PASSWORD)"
+	@sh ./scripts/redis-cluster.sh "$(REDIS_CLUSTER_NODES_NUMBER)" "$(REDIS_VERSION)" "$(NETWORK_NAME)" "TLS" "$(REDIS_PASSWORD)"
 ####################################################################################
 # Redis Replication Creation
 ####################################################################################
 .PHONY: redis-replication redis-replication-ssl
 redis-replication : redis-single
-	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)"
+	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(REDIS_VERSION)" "$(NETWORK_NAME)"
 
 redis-replication-ssl : redis-single-ssl
-	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(NETWORK_NAME)" "TLS"
+	@sh ./scripts/redis-replication.sh "$(REDIS_REPLICATION_SLAVES_NUMBER)" "$(REDIS_VERSION)" "$(NETWORK_NAME)" "TLS"
 ####################################################################################
 # Redis Sentinel Creation
 ####################################################################################
