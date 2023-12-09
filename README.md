@@ -24,6 +24,9 @@ If this network does not exist, this script will create this network for you.
 
 There are a few variables you can change on `Makefile`
 
+- **REDIS_VERSION**
+  You can define the redis version you want to use. (Default: `7.2`)
+
 - **NETWORK_NAME**
 
   You can join redis to your application network. Let's say your app is running in network `my-app`, you can use this parameter to run redis within the same docker network. (Default: `redis-demo`)
