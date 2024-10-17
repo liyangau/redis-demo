@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /usr/bin/env bash
 if [ "$(docker ps -f name=redis -aq)" ]; then
     docker stop $(docker ps -f name=redis -qa) | 2> /dev/null
     docker rm $(docker ps -f name=redis -qa) | 2> /dev/null
