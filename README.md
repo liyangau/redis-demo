@@ -26,30 +26,30 @@ If this network does not exist, this script will create this network for you.
 
 There are a few variables you can change on `Makefile`
 
-- **REDIS_VERSION**
+- **VALKEY_VERSION**
   You can define the valkey version you want to use. (Default: `8.0`)
 
 - **NETWORK_NAME**
 
   You can join valkey to your application network. Let's say your app is running in network `my-app`, you can use this parameter to run valkey within the same docker network. (Default: `redis-demo`)
 
-- **REDIS_PASSWORD**
+- **VALKEY_PASSWORD**
 
   This is the password to authenticate valkey. You need this password to authenicate with `valkey-cli`. (Default: `A-SUPER-STRONG-DEMO-PASSWORD` )
 
-- **REDIS_SSL_CN**
+- **VALKEY_SSL_CN**
 
   Common name of the SSL certificate. change it to anything suit your system, it is self-sign and won't be trusted  unless your system choose to. (Default: `valkey.test.demo`)
 
-- **REDIS_REPLICATION_SLAVES_NUMBER**
+- **VALKEY_REPLICATION_SLAVES_NUMBER**
 
   How many slaves in the valkey cluster you need. This support from 3 to 8 slaves. You can spin up more if you want but I limit my code to run at most 8 containers. (Default: `3`)
 
-- **REDIS_CLUSTER_NODES_NUMBER**
+- **VALKEY_CLUSTER_NODES_NUMBER**
 
   How many nodes on your valkey cluster. This support from 6 to 12 Nodes. My script create 1 replica per master node so setting this value to 6 will give you a cluster with 3 master node and 1 replica for each master. (Default: `6`)
 
-- **REDIS_SENTINEL_PORT**
+- **VALKEY_SENTINEL_PORT**
 
   You can set default sentinel port with this variable. (Default: `26379`)
 
@@ -59,34 +59,34 @@ There are a few variables you can change on `Makefile`
 
 #### Standalone Redis
 
-- `make valkey-single`
-- `make valkey-single-ssl`
+- `make redis-single`
+- `make redis-single-ssl`
 
-You can use one of these two commands to start a single valkey container `redis-demo`. The configure file is downloaded from valkey [official website](https://github.com/valkey-io/valkey/blob/unstable/valkey.conf). In this setup, my script will change `bind 127.0.0.1` to `bind 0.0.0.0` and inject password define in `REDIS_PASSWORD` to the config file.
+You can use one of these two commands to start a single valkey container `redis-demo`. The configure file is downloaded from valkey [official website](https://github.com/valkey-io/valkey/blob/unstable/valkey.conf). In this setup, my script will change `bind 127.0.0.1` to `bind 0.0.0.0` and inject password define in `VALKEY_PASSWORD` to the config file.
 
 #### Redis Cluster
 
-- `make valkey-cluster`
-- `make valkey-cluster-ssl`
+- `make redis-cluster`
+- `make redis-cluster-ssl`
 
-You can use one of these two commands to start a valkey cluster. You need to use 6 to 12 nodes for your cluster, nodes number is defined by `REDIS_CLUSTER_NODES_NUMBER` variable. By default this script create 6 nodes, 3 master and 3 slaves.
+You can use one of these two commands to start a valkey cluster. You need to use 6 to 12 nodes for your cluster, nodes number is defined by `VALKEY_CLUSTER_NODES_NUMBER` variable. By default this script create 6 nodes, 3 master and 3 slaves.
 
 #### Redis Replication
 
-- `make valkey-replication`
-- `make valkey-replication-ssl`
+- `make redis-replication`
+- `make redis-replication-ssl`
 
 You can use one of these two commands to start a valkey replication. The master container is `redis-demo` and the number of slaves is definied with **REDIS_REPLICATION_SLAVES_NUMBER** variable. By default this script create 3 slaves.
 
 #### Redis Sentinel
 
-- `make valkey-sentinel`
-- `make valkey-sentinel-ssl`
+- `make redis-sentinel`
+- `make redis-sentinel-ssl`
 
 These two command will spin up a valkey cluster first and then start 3 sentinel containers to monitor the cluster. If the master container  is down, sentinel will promot one of the slaves to be the master node.
 
 #### Clean up
 
-- `make valkey-cleanup`
+- `make redis-cleanup`
 
-This command will find all container has `valkey` in it, stop and remove these container. CAUTION: This command removes **ALL** contaners has `valkey` keyword in container name.
+CAUTION: This command removes **ALL** contaners has `redis` keyword in container name.
