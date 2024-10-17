@@ -76,7 +76,7 @@ You can use one of these two commands to start a valkey cluster. You need to use
 - `make redis-replication`
 - `make redis-replication-ssl`
 
-You can use one of these two commands to start a valkey replication. The master container is `redis-demo` and the number of slaves is definied with **REDIS_REPLICATION_SLAVES_NUMBER** variable. By default this script create 3 slaves.
+You can use one of these two commands to start a valkey replication. The master container is `redis-demo` and the number of slaves is definied with **VALKEY_REPLICATION_SLAVES_NUMBER** variable. By default this script create 3 slaves.
 
 #### Redis Sentinel
 
